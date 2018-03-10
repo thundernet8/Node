@@ -59,7 +59,7 @@ const buf1 = Buffer.alloc(5); // 初始化一个5个字节长度的buffer，默�
 
 const buf2 = Buffer.alloc(5, 10); // 初始化一个5个字节长度的buffer，填充初始值0xa, '<Buffer 0a 0a 0a 0a 0a>'
 
-const buf3 = Buffer.alloc(5, "a", "utf8"); // 初始化一个5个字节长度的buffer，填充初始值为utf8编码的字符a，'<Buffer 61 61 61 61 61>'
+const buf3 = Buffer.alloc(5, 'a', 'utf8'); // 初始化一个5个字节长度的buffer，填充初始值为utf8编码的字符a，'<Buffer 61 61 61 61 61>'
 ```
 
 如果需要对不合法的参数输入直接报出异常，可以使用`Buffer.allocUnsafe(size)`，同时性能上更好，因为其底层内存未初始化，所以新 buffer 的内容是不可预知的，要确保初始内容一致，可以使用`buffer.fill(0)`填充内容为`0x0`。
@@ -87,4 +87,22 @@ ArrayBuffer { byteLength: 5 }
 > Buffer.poolSize
 8192
 >
+```
+
+## 实战
+
+### 转换 Base64 文本
+
+普通文本转换为 Base64 编码文本
+
+```js
+const text = 'a normal text';
+const base64Text = Buffer.from(text).toString('base64'); // 'YSBub3JtYWwgdGV4dA=='
+```
+
+Base64 编码文本转普通原始文本
+
+```js
+const base64Text = 'YSBub3JtYWwgdGV4dA==';
+const text = Buffer.from(base64Text, 'base64').toString(); // 'a normal text'
 ```
