@@ -89,9 +89,26 @@ ArrayBuffer { byteLength: 5 }
 >
 ```
 
-## 实战
+## Buffer 解码、转码
 
-### 转换 Base64 文本
+Buffer 解码转码支持`ascii`,`utf8`,`utf16le`(同`ucs2`),`base64`,`latin1`(同`binary`)和`hex`
+
+其中`ascii`意味着每个 Buffer 元素不超过 127,对于超出的元素将以二进制截断高位直至符合大小
+
+`latin1`与`ascii`一样都是单个元素表示一个实际字符，不过编码范围扩大到了 255
+
+`utf8`编码则是 1~4 个元素才能表示一个实际字符，这是 Buffer 的默认编码
+
+`utf16le`编码则是 2 或 4 个元素才能表示一个实际字符
+
+`hex`编码实际是 Buffer 各元素 16 进制表示的拼接
+
+```js
+const buf = Buffer.from('test'); // '<Buffer 74 65 73 74>'
+buf.toString('hex'); // 74657374
+```
+
+`base64`实质是字节按规则映射
 
 普通文本转换为 Base64 编码文本
 
@@ -105,4 +122,44 @@ Base64 编码文本转普通原始文本
 ```js
 const base64Text = 'YSBub3JtYWwgdGV4dA==';
 const text = Buffer.from(base64Text, 'base64').toString(); // 'a normal text'
+```
+
+## Buffer 比较
+
+### buffer1.equals(buffer2)
+
+实际是判断二者存储的数据是否相同
+
+### buffer.compare(target[, targetStart[, targetEnd[, sourceStart[, sourceEnd]]]])
+
+对两个 buffer 实例进行比较，可以通过 start、end 指定指定特定比较的范围返回值为整数，意义为:
+
+*   0：buffer、target 大小相同。
+*   1：buffer 大于 target，也就是说 buffer 应该排在 target 之后。
+*   -1：buffer 小于 target，也就是说 buffer 应该排在 target 之前
+
+### Buffer.compare(buffer1, buffer2)
+
+这实际上是 buffer.compare 的静态版本，但是它可以直接作为排序的参数
+
+```js
+const arr = [buffer1, buffer2];
+arr.sort(Buffer.compare);
+```
+
+## Buffer 查找
+
+### buffer.indexOf(value[, byteOffset][, encoding])
+
+有不同类型的`value`参数，包括:
+
+*   String: encoding 即 value 的编码，默认 utf8
+*   Buffer: 会将 buffer 中的数据与 value 对比
+*   Integer: value 是作为无符号的 8bits 整数(0~255)，即会查找其数值等于 value 的第一个元素
+
+```js
+const buffer = Buffer.from('this is a buffer'); // '<Buffer 74 68 69 73 20 69 73 20 61 20 62 75 66 66 65 72>'
+buffer.indexOf('this'); // 0
+buffer.indexOf(Buffer.from('a buffer')); // 8
+buffer.indexOf(104); // 1, 104的16进制表示即为第二个元素0x68
 ```
