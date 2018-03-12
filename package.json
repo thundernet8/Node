@@ -1,0 +1,14 @@
+{
+    "name": "node",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "git@github.com:thundernet8/Node.git",
+    "author": "wuxueqian <wuxueqian2010@hotmail.com>",
+    "license": "MIT",
+    "dependencies": {
+        "benchmark": "^2.1.4"
+    },
+    "scripts": {
+        "benchmark": "node Practice/benchmark/index.js"
+    }
+}
